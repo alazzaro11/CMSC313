@@ -1,21 +1,14 @@
+AUTHORING: Antonio Lazzaro/UMBC/CMSC 313/10:00/(4/16/25)
 
-The purpose of this repository is to 
+PURPOSE: These files are meant to create libraries for matrix operations that can be used on any matrices of arbitrary 2D size.
 
-1. Have the student access and download a read-only repository off of github.com
-2. Compile and compare the assembly generated for C (addmatsSimple.c and addmatsSubr.c) and
-   C++ (addmats.cpp) programs.
-4. Compile and explain how the C source code relates to the assembly generated for a simple
-   program (basic.c).
+FILES:
+matrix.h - Header file for matrix.cpp, which includes the Matrix class and its member functions, allows the creation of matrices and multiple operations on them.
+matrix.cpp - Tests the functionality of the implemented Matrix functions.
+matrix.c - Another implementation of matrix operations and testing, but done in C rather than C++.
 
-To have gcc generate the assembly code from a C or C++ program, use the options "-m32 -O0 -S". 
-For example, to generate the assembly code, addmats.s, for the C++ code addmats.cpp, use 
+BUILD INSTRUCTIONS: Matricies in both versions are created through 2D arrays. In the C++ file, the functions are meant to be implemented so that other than taking the transpose of a matrix, all operations can be written as if writing operations for integers. (Note that the scalor must be to the right of the multiplication operator.) Matrices in the C version must be iniitialized through "allocMat()" if created from scratch. All matrices in the C version must be deinitialized using "deallocMat" before the end of the program to prevent leaks.
 
-  gcc -m32 -O0 -S addmats.cpp 
+TESTING METHODOLOGY: In the main functions for both of the testing programs, 3 matricies were intialized from scratch, as defined in the assignment instructions, and D was initialized through the operations done on the other 3 matrices.
 
-  where 
-    '-m32' forces gcc to generate 32-bit x86 code 
-    '-O0' says no optimization 
-    '-S' says to expose the .s assembly code 
-
-
-    
+ADDITIONAL INFORMATION: My machine repeatedly put out that the size of the arrays were equal to the size of a single integer, thus I was not able to complete sufficient testing.
