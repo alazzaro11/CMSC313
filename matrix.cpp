@@ -27,7 +27,7 @@ int main(){
     matrix3[1] = matrix32;
     const Matrix C(2, 3, matrix3);
 
-    cout << B + C << endl;
+    cout << A + ((B*3) * C.transpose()) << endl;
 
     return 0;
 }
