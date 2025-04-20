@@ -32,39 +32,46 @@ class Matrix{
         }
     }
 
+    //Copy constructor for matrices
+    //Creates a deep copy of the passed matrix
+    Matrix(const Matrix& rhs){
+        //Define dimensions
+        m_rows = rhs.m_rows;
+        m_columns = rhs.m_columns;
+
+        //Build matrix
+        m_matrix = new int*[m_rows];
+        for (int i = 0; i < m_rows; i++){
+            m_matrix[i] = new int[m_columns];
+            for (int x = 0; x < m_columns; x++){
+                if (rhs.m_matrix[i][x]){
+                    m_matrix[i][x] = rhs.m_matrix[i][x];
+                } else {
+                    m_matrix[i][x] = DEFVALUE;
+                }
+            }
+        }
+    }
+
+
+
     //Destructor for matricies
     ~Matrix(){
         clear(m_matrix, m_rows);
-    }
-
-    void clear(int* matrix[], int rows){
-        for (int i = 0; i < rows; i++){
-            delete[] matrix[i];
-        }
-        delete[] m_matrix;
     }
 
     //Overloaded multiplication operator for the Matrix class
     //This version of the multiplication operator allows scalors to
     //be applied to matricies
     Matrix operator*(const int scalor) const{
-        //Build new matrix
-        int** nValues = new int*[m_rows];
-        for (int i = 0; i < m_rows; i++){
-            nValues[i] = new int[m_columns];
-            for (int x = 0; x < m_columns; x++){
-                nValues[i][x] = m_matrix[i][x] * scalor;
+            Matrix nMatrix(*this);
+            for (int i = 0; i < m_rows; i++){
+                for (int x = 0; x < m_columns; x++){
+                    nMatrix.m_matrix[i][x] *= scalor;
+                }
             }
-        }
 
-        //Build ne object
-        Matrix nMatrix(m_rows, m_columns, nValues);
-        for (int i = 0; i < m_rows; i++){
-            delete[] nValues[i];
-        }
-        delete[] nValues;
-
-        return nMatrix;
+            return nMatrix;
     }
 
     //Creates a transpose of the passed matrix
@@ -97,22 +104,12 @@ class Matrix{
     //Allows matricies to be added together
     Matrix operator+(const Matrix& rhs) const{
         if ((m_rows == rhs.m_rows) and (m_columns == rhs.m_columns)){
-            //Build new matrix
-            int** nValues = new int*[m_rows];
+            Matrix nMatrix(*this);
             for (int i = 0; i < m_rows; i++){
-                nValues[i] = new int[m_columns];
                 for (int x = 0; x < m_columns; x++){
-                    nValues[i][x] = 
-                    m_matrix[i][x] + rhs.m_matrix[i][x];
+                    nMatrix.m_matrix[i][x] += rhs.m_matrix[i][x];
                 }
             }
-
-            //Build ne object
-            Matrix nMatrix(m_rows, m_columns, nValues);
-            for (int i = 0; i < m_rows; i++){
-                delete[] nValues[i];
-            }
-            delete[] nValues;
 
             return nMatrix;
         }
@@ -130,10 +127,10 @@ class Matrix{
             const int nColumns = rhs.m_columns;
 
             //Create new matrix
-            int** nValues= new int*[nRows];
+            int** nValues = new int*[m_rows];
             Matrix nrhs = rhs.transpose();
             for (int i = 0; i < nRows; i++){
-                nValues[i] = new int[nColumns];
+                nValues[i] = new int[rhs.m_columns];
                 for (int x = 0; x < nColumns; x++){
                     nValues[i][x] = 
                     dot(m_matrix[i], nrhs.m_matrix[x], m_columns);
@@ -192,6 +189,34 @@ class Matrix{
         return os;
     }
 
+    //Overloaded equivalence operator for matrices
+    //Returns true if both matrices have the same dimensions and values
+    bool operator==(const Matrix& rhs) const{
+        if (this == &rhs){
+            return true;
+        } else if ((m_rows == rhs.m_rows) and (m_columns == rhs.m_columns)) {
+            for (int i = 0; i < m_rows; i++){
+                for (int x = 0; x < m_columns; x++){
+                    if (m_matrix[i][x] != rhs.m_matrix[i][x]){
+                        return false;
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+    //Overloaded non-equivilance operator for matrices
+    //Returns true if either matrix differs at all from the other
+    bool operator!=(const Matrix& rhs) const{
+        if (*this == rhs){
+            return false;
+        }
+
+        return true;
+    }
+
     //Public member variables
     int** m_matrix;
 
@@ -212,6 +237,14 @@ class Matrix{
         }
 
         return sum;
+    }
+
+    //Deallocates all values in a matrix
+    void clear(int* matrix[], int rows){
+        for (int i = 0; i < rows; i++){
+            delete[] matrix[i];
+        }
+        delete[] m_matrix;
     }
 };
 
